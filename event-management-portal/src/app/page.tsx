@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Users } from 'lucide-react';
-import { EventList } from '@/components/events/EventList';
-import { AttendeeList } from '@/components/attendees/AttendeeList';
-import { useEvents } from '@/hooks/useEvents';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
+import { useState } from "react";
+import { Users } from "lucide-react";
+import { EventList } from "@/components/events/EventList";
+import { AttendeeList } from "@/components/attendees/AttendeeList";
+import { useEvents } from "@/hooks/useEvents";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 
 interface Event {
   id: number;
@@ -20,23 +20,23 @@ interface Event {
 export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { toast } = useToast();
-  
+
   const { events, isLoading, createEvent, deleteEvent, deletingId } = useEvents();
 
-  const showToast = (message: string, type: 'success' | 'error') => {
+  const showToast = (message: string, type: "success" | "error") => {
     toast({
-      title: type === 'success' ? 'Success' : 'Error',
+      title: type === "success" ? "Success" : "Error",
       description: message,
-      variant: type === 'error' ? 'destructive' : 'default',
+      variant: type === "error" ? "destructive" : "default",
     });
   };
 
   const handleCreateEvent = async (data: any) => {
     try {
       await createEvent(data);
-      showToast('Event created successfully!', 'success');
+      showToast("Event created successfully!", "success");
     } catch (error) {
-      showToast('Failed to create event', 'error');
+      showToast("Failed to create event", "error");
       throw error;
     }
   };
@@ -45,16 +45,14 @@ export default function Home() {
     try {
       await deleteEvent(id);
       if (selectedEvent?.id === id) setSelectedEvent(null);
-      showToast('Event deleted successfully!', 'success');
+      showToast("Event deleted successfully!", "success");
     } catch (error) {
-      showToast('Failed to delete event', 'error');
+      showToast("Failed to delete event", "error");
       throw error;
     }
   };
 
-  const handleRefresh = () => {
-    // Events will auto-refresh via TanStack Query
-  };
+  const handleRefresh = () => {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,19 +77,13 @@ export default function Home() {
 
           <div>
             <h2 className="text-2xl font-semibold text-gray-900 mb-6">Attendee Management</h2>
-            
+
             {selectedEvent ? (
               <Card>
                 <div className="p-6">
                   <CardTitle className="mb-2">{selectedEvent.title}</CardTitle>
-                  <CardDescription className="mb-6">
-                    {new Date(selectedEvent.date).toLocaleDateString()}
-                  </CardDescription>
-                  <AttendeeList
-                    event={selectedEvent}
-                    showToast={showToast}
-                    onRefresh={handleRefresh}
-                  />
+                  <CardDescription className="mb-6">{new Date(selectedEvent.date).toLocaleDateString()}</CardDescription>
+                  <AttendeeList event={selectedEvent} showToast={showToast} onRefresh={handleRefresh} />
                 </div>
               </Card>
             ) : (
@@ -99,9 +91,7 @@ export default function Home() {
                 <CardContent className="flex flex-col items-center justify-center p-12">
                   <Users className="h-16 w-16 text-gray-400 mb-4" />
                   <CardTitle className="mb-2">Select an event</CardTitle>
-                  <CardDescription>
-                    Choose an event from the list to manage attendees
-                  </CardDescription>
+                  <CardDescription>Choose an event from the list to manage attendees</CardDescription>
                 </CardContent>
               </Card>
             )}
@@ -111,3 +101,4 @@ export default function Home() {
     </div>
   );
 }
+ 

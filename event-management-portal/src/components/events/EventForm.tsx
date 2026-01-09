@@ -17,7 +17,7 @@ interface EventFormProps {
 
 export function EventForm({ onSuccess, onCancel, onSubmit }: EventFormProps) {
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<EventFormData>({
-    resolver: zodResolver(eventSchema)
+    resolver: zodResolver(eventSchema) as any
   });
 
   const handleFormSubmit = async (data: EventFormData) => {
@@ -84,7 +84,7 @@ export function EventForm({ onSuccess, onCancel, onSubmit }: EventFormProps) {
 
       <div className="flex gap-3 pt-4">
         <Button
-          onClick={handleSubmit(handleFormSubmit)}
+          onClick={handleSubmit(handleFormSubmit as any)}
           disabled={isSubmitting}
           className="flex-1"
         >

@@ -41,20 +41,27 @@ export function useEvents() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/events/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/events/${id}`, {
+        method: 'DELETE'
+      });
       if (!res.ok) throw new Error('Failed to delete event');
       return id;
     },
-    onMutate: async (id) => {
+    onMutate: async (id: number) => {
       await queryClient.cancelQueries({ queryKey: ['events'] });
-      const previous = queryClient.getQueryData(['events']);
-      queryClient.setQueryData(['events'], (old: Event[] = []) => 
-        old.filter(e => e.id !== id)
+
+      const previous = queryClient.getQueryData<Event[]>(['events']);
+
+      queryClient.setQueryData<Event[]>(['events'], (old = []) =>
+        old.filter(event => event.id !== id)
       );
+
       return { previous };
     },
-    onError: (err, id, context) => {
-      queryClient.setQueryData(['events'], context?.previous);
+    onError: (_err, _id, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['events'], context.previous);
+      }
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
@@ -66,6 +73,6 @@ export function useEvents() {
     isLoading,
     createEvent: createMutation.mutateAsync,
     deleteEvent: deleteMutation.mutateAsync,
-    deletingId: deleteMutation.variables
+    deletingId: deleteMutation.variables ?? null
   };
 }
