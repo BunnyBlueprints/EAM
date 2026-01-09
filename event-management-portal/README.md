@@ -34,3 +34,22 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Prisma & Production DB
+
+- Add a `DATABASE_URL` environment variable in Vercel (Production) pointing to a managed database (Postgres, MySQL, Neon, PlanetScale, Supabase, Railway, etc.).
+- Do NOT use SQLite in production on Vercel — the filesystem is ephemeral.
+
+This repo includes a GitHub Actions workflow that runs migrations and seeds on push to `main`. To enable it:
+
+1. Add `DATABASE_URL` as a repository secret in GitHub (Settings → Secrets) with your production DB connection string.
+2. Ensure Vercel has the same `DATABASE_URL` in Project Settings → Environment Variables (Production).
+3. Push to `main` — the workflow will run `npx prisma migrate deploy` and `npx prisma db seed`.
+
+If you'd rather run migrations during build, set Vercel's Build Command to:
+
+```
+npx prisma generate && npx prisma migrate deploy && npx prisma db seed && npm run build
+```
+
+If you'd like, I can add or adjust CI workflows or switch Prisma IDs to `Int` and update the app types.
